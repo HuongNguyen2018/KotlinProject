@@ -5,30 +5,25 @@ import android.net.Uri
 import android.provider.MediaStore
 import androidx.lifecycle.*
 import com.hhmusic.HHMusicApplication
-import com.hhmusic.data.model.Song
+//import com.hhmusic.data.model.Song
+import com.hhmusic.data.entities.Song
 import android.content.ContentUris
+import com.hhmusic.data.repository.MusicRepository
 
 
+class SongViewModel internal constructor(
+    private val songRepository: MusicRepository
+) : ViewModel() {
 
-class PageViewModel : ViewModel() {
-
-    private val _index = MutableLiveData<Int>()
-    val text: LiveData<String> = Transformations.map(_index) {
-        "Hello world from section: $it"
-    }
 
     val mObserverSongList = MediatorLiveData<List<Song>>()
-    val songList : MutableLiveData<List<Song>> =  MutableLiveData<List<Song>>()
+    //val songList : MutableLiveData<List<Song>> =  MutableLiveData<List<Song>>()
 
     init {
-
+        var songList = songRepository.getSongList()
         mObserverSongList.addSource(songList, mObserverSongList::setValue)
     }
 
-
-    fun setIndex(index: Int) {
-        _index.value = index
-    }
 
     fun getObserverSongList(): LiveData<List<Song>> {
         return mObserverSongList;
@@ -38,6 +33,8 @@ class PageViewModel : ViewModel() {
     fun getSongList() {
 
         var listSong : ArrayList<Song> =  ArrayList<Song>()
+
+        /*
         val uri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         val selection = MediaStore.Audio.Media.IS_MUSIC + " != 0"
 
@@ -95,7 +92,7 @@ class PageViewModel : ViewModel() {
         }
 
         songList.value = listSong;
-
+        */
 
     }
 
