@@ -1,6 +1,8 @@
 package com.hhmusic.ui.activity
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -19,6 +21,8 @@ import com.hhmusic.R
 import com.hhmusic.ui.activity.ui.main.SectionsPagerAdapter
 
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ShareCompat
+import com.hhmusic.data.entities.Song
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -189,4 +193,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
+
+    public fun openPlayerScreen() {
+
+        val intent = Intent(this, PlayerActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        startActivity(intent)
+
+    }
+
+    companion object {
+
+        const val KEY_SONG = "song"
+
+        fun intent(context: Context, song: ArrayList<Song>): Intent {
+            val intent = Intent(context, PlayerActivity::class.java)
+            intent.putParcelableArrayListExtra(KEY_SONG, song)
+            return intent
+        }
+    }
+
 }

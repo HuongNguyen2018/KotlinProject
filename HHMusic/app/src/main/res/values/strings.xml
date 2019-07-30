@@ -21,4 +21,7 @@
     <string name="tab_text_folder">Folder</string>
 
     <string name="is_loading">Loading...</string>
+    <string name="title_activity_player">PlayerActivity</string>
+    <string name="duration_unknown">--:--</string>
+    <string name="duration_format">%d:%02d</string>
 </resources>

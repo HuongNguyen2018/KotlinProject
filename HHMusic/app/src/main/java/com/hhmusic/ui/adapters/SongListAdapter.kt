@@ -10,9 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hhmusic.HHMusicApplication
 import com.hhmusic.data.entities.Song
 import com.hhmusic.databinding.SongListItemBinding
+import com.hhmusic.ui.activity.MainActivity
 
-class SongListAdapter: ListAdapter<Song, SongListAdapter.SongListViewHolder>(SongDiffCallback()) {
+class SongListAdapter(private val myActivity: MainActivity): ListAdapter<Song, SongListAdapter.SongListViewHolder>(SongDiffCallback()) {
 
+    lateinit var songList: List<Song>;
+
+    fun setSongList(list : ArrayList<Song>){
+        songList = ArrayList(list)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongListViewHolder {
 
@@ -34,6 +40,10 @@ class SongListAdapter: ListAdapter<Song, SongListAdapter.SongListViewHolder>(Son
         return View.OnClickListener {
             //val direction = PlantListFragmentDirections.ActionPlantListFragmentToPlantDetailFragment(plantId)
             //it.findNavController().navigate(direction)
+
+            val context =  MainActivity.intent(it.context, ArrayList(songList))
+            myActivity.openPlayerScreen()
+
             Toast.makeText(HHMusicApplication.applicationContext(), "Play song", Toast.LENGTH_SHORT).show()
         }
     }
