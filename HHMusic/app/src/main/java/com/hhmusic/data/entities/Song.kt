@@ -20,28 +20,32 @@ data class Song(  @PrimaryKey @ColumnInfo(name = "id") var songId: Long = 0,
 ) : Parcelable{
 
 
-    constructor(parcel: Parcel) : this(parcel.readLong()) {
-        songId = parcel.readLong()
-        title = parcel.readString()
-        artistName = parcel.readString()
-        albumName = parcel.readString()
+    private constructor(parcel: Parcel) : this (
+        songId = parcel.readLong(),
+        title = parcel.readString(),
+        artistName = parcel.readString(),
+        albumName = parcel.readString(),
+        duration = parcel.readLong(),
         imagePathStr = parcel.readString()
-        duration = parcel.readLong()
+    )
+
+    override fun writeToParcel(dest: Parcel, flags: Int)  {
+        dest.writeLong(songId)
+        dest.writeString(title)
+        dest.writeString(artistName)
+        dest.writeString(albumName)
+        dest.writeLong(duration)
+        dest.writeString(imagePathStr)
     }
 
-//    public constructor(id: Long, title: String, artistName: String, albumName: String, duration: Long, imagePath: String): this(id) {
-//        this.songId = id
-//        this.title = title
-//        this.artistName = artistName
-//        this.albumName = albumName
-//        this.duration = duration
-//        this.imagePathStr = imagePath
-//
-//
-//    }
+    override fun describeContents() = 0
 
     companion object {
-
+        @JvmField
+        val CREATOR = object : Parcelable.Creator<Song> {
+            override fun createFromParcel(parcel: Parcel) = Song(parcel)
+            override fun newArray(size: Int) = arrayOfNulls<Song>(size)
+        }
 
         /**
          * Create a new [Song] from the specified [ContentValues].
@@ -85,33 +89,4 @@ data class Song(  @PrimaryKey @ColumnInfo(name = "id") var songId: Long = 0,
 
         return HHMusicConstants.setCorrectDuration(duration)
     }
-
-
-    override fun writeToParcel(dest: Parcel?, flags: Int) {
-        dest?.writeString(title)
-        dest?.writeString(artistName)
-        dest?.writeString(albumName)
-        dest?.writeLong(duration)
-        dest?.writeString(getImageUrl())
-
-    }
-
-    override fun describeContents(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-
-    override fun toString() = title
-
-
-    companion object CREATOR : Parcelable.Creator<Song> {
-        override fun createFromParcel(parcel: Parcel): Song {
-            return Song(parcel)
-        }
-
-        override fun newArray(size: Int): Array<Song?> {
-            return arrayOfNulls(size)
-        }
-    }
-
 }
