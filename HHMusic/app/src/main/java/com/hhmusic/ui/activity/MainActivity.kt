@@ -3,6 +3,7 @@ package com.hhmusic.ui.activity
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.accounts.Account
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -20,17 +21,18 @@ import com.google.android.material.tabs.TabLayout
 import com.hhmusic.R
 import com.hhmusic.ui.activity.ui.main.SectionsPagerAdapter
 
-import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ShareCompat
 import com.hhmusic.data.entities.Song
+import com.hhmusic.utilities.SyncUtils
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    private lateinit var tabs: TabLayout
+    private lateinit var mAccount: Account
 
-    private lateinit var tabs: TabLayout;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -48,6 +50,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navView.setNavigationItemSelectedListener(this)
 
         checkPermission()
+
+        /*
+         * Create the dummy account. The code for CreateSyncAccount
+         * is listed in the lesson Creating a Sync Adapter
+         */
+        mAccount = SyncUtils.CreateSyncAccount(applicationContext)
+        SyncUtils.TriggerRefresh(mAccount)
     }
 
     val MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123
@@ -87,25 +96,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
     }
-        // Receive the permissions request result
-      override  fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
+
+    // Receive the permissions request result
+    override  fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                                 grantResults: IntArray) {
-            when (requestCode) {
-                MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE ->{
-                    val isPermissionsGranted = processPermissionsResult(requestCode,permissions,grantResults)
+        when (requestCode) {
+            MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE ->{
+                val isPermissionsGranted = processPermissionsResult(requestCode,permissions,grantResults)
 
-                    if(isPermissionsGranted){
-                        // Do the task now
-                        toast("Permissions granted.")
-                        initTabLayout();
+                if(isPermissionsGranted){
+                    // Do the task now
+                    toast("Permissions granted.")
+                    initTabLayout();
 
-                    }else{
-                        toast("Permissions denied.")
-                    }
-                    return
+                }else{
+                    toast("Permissions denied.")
                 }
+                return
             }
         }
+    }
+
     // Process permissions result
     fun processPermissionsResult(requestCode: Int, permissions: Array<String>,
                                  grantResults: IntArray): Boolean {
@@ -118,10 +129,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (result == PackageManager.PERMISSION_GRANTED) return true
         return false
     }
-        // Extension function to show toast message
-        fun toast(message: String) {
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-        }
+
+    // Extension function to show toast message
+    fun toast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
 
     fun initTabLayout(){
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
@@ -131,6 +143,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         tabs.setupWithViewPager(viewPager)
         setupTabicons()
     }
+
     fun setupTabicons() {
 
         tabs.getTabAt(0)?.setIcon(R.drawable.ic_tab_1)
@@ -142,6 +155,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     }
+
     override fun onBackPressed() {
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -158,12 +172,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
+        when (item.itemId) {
+            // If the user clicks the "Setting" button.
+            R.id.action_settings -> {
+                SyncUtils.TriggerRefresh(mAccount)
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
         }
     }
 

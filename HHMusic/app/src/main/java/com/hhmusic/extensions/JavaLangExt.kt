@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.uamp.media.extensions
+package com.hhmusic.music.extensions
 
 import android.net.Uri
 import java.net.URLEncoder

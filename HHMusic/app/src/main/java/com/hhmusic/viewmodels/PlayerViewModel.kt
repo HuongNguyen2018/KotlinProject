@@ -9,12 +9,13 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.*
-import com.example.android.uamp.media.extensions.*
+
 import com.hhmusic.common.MediaSessionConnection
 import com.hhmusic.data.entities.Song
 import com.hhmusic.R
 import com.hhmusic.common.EMPTY_PLAYBACK_STATE
 import com.hhmusic.common.NOTHING_PLAYING
+import com.hhmusic.music.extensions.*
 
 class PlayerViewModel(private val app: Application,
                       mediaSessionConnection: MediaSessionConnection) : ViewModel() {
@@ -75,7 +76,7 @@ class PlayerViewModel(private val app: Application,
     metadata: MediaMetadataCompat
     ) {
         //id: Long, title: String, artistName: String, albumName: String, duration: Long, imagePath: Uri
-        var song: Song = Song(metadata.id.toLong(), ""+metadata.title,""+metadata.artist,""+ metadata.album, metadata.duration, metadata.albumArtUri)
+        var song: Song = Song(metadata.id.toLong(), ""+metadata.title,""+metadata.artist,""+ metadata.album, metadata.duration, metadata.albumArtUri.path)
 
         this.mediaMetadata.postValue(song)
     // Update the media button resource ID

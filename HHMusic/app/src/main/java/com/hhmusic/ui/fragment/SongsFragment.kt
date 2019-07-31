@@ -10,7 +10,9 @@ import androidx.lifecycle.ViewModelProviders
 import com.hhmusic.databinding.FragmentSongListBinding
 import com.hhmusic.ui.activity.MainActivity
 import com.hhmusic.ui.adapters.SongListAdapter
+import com.hhmusic.utilities.InjectorUtils
 import com.hhmusic.viewmodels.PageViewModel
+import com.hhmusic.viewmodels.PlayListViewModel
 import com.hhmusic.viewmodels.SongViewModel
 
 class SongsFragment(private val myActivity: MainActivity): Fragment() {
@@ -22,9 +24,15 @@ class SongsFragment(private val myActivity: MainActivity): Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        viewModel = ViewModelProviders.of(this).get(SongViewModel::class.java).apply {
+        //viewModel = ViewModelProviders.of(this).get(SongViewModel::class.java).apply {
 
-        }
+        //}
+
+        val context = context ?: return binding.root
+
+        val factory = InjectorUtils.provideSongViewModelFactory(context)
+        viewModel = ViewModelProviders.of(this, factory).get(SongViewModel::class.java)
+
         binding = FragmentSongListBinding.inflate(inflater,container, false)
 //        val context = context ?: return binding.root
 
@@ -48,9 +56,5 @@ class SongsFragment(private val myActivity: MainActivity): Fragment() {
             binding.songListview.adapter = adapter
             }
         })
-
     }
-
-
-
 }

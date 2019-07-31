@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.uamp.media.extensions
+package com.hhmusic.music.extensions
 
 import android.graphics.Bitmap
 import android.net.Uri
