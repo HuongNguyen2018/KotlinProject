@@ -31,20 +31,16 @@ class SongListAdapter(private val myActivity: MainActivity): ListAdapter<Song, S
 
         val song: Song = getItem(position)
         holder.apply {
-            bind(createOnClickListener(song), song)
+            bind(createOnClickListener(song, position), song)
             itemView.tag = song
         }
     }
 
 
-    private fun createOnClickListener(song: Song): View.OnClickListener {
+    private fun createOnClickListener(song: Song, position: Int): View.OnClickListener {
         return View.OnClickListener {
-            //val direction = PlantListFragmentDirections.ActionPlantListFragmentToPlantDetailFragment(plantId)
-            //it.findNavController().navigate(direction)
-
-            val context =  MainActivity.intent(it.context, ArrayList(songList))
-            myActivity.openPlayerScreen()
-
+            val bundle =  MainActivity.getIntent(it.context, ArrayList(songList), song.songId, position)
+            myActivity.openPlayerScreen(bundle)
             Toast.makeText(HHMusicApplication.applicationContext(), "Play song", Toast.LENGTH_SHORT).show()
         }
     }

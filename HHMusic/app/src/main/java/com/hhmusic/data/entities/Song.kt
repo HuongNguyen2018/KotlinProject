@@ -1,18 +1,15 @@
 package com.hhmusic.data.entities
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
-import android.net.Uri
 
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.annotation.Nullable
 import com.hhmusic.utilities.HHMusicConstants
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@SuppressLint("ParcelCreator")
+//@SuppressLint("ParcelCreator")
 @Entity(tableName = "songs")
 data class Song(  @PrimaryKey @ColumnInfo(name = "id") var songId: Long = 0,
                     @ColumnInfo(name = "title") var title: String = "",
@@ -105,5 +102,16 @@ data class Song(  @PrimaryKey @ColumnInfo(name = "id") var songId: Long = 0,
 
 
     override fun toString() = title
+
+
+    companion object CREATOR : Parcelable.Creator<Song> {
+        override fun createFromParcel(parcel: Parcel): Song {
+            return Song(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Song?> {
+            return arrayOfNulls(size)
+        }
+    }
 
 }
