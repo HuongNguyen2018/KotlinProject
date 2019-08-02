@@ -220,14 +220,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     companion object {
 
-        const val KEY_SONG = "song"
+        const val KEY_SONGS = "song"
         const val KEY_SONG_ID ="songId"
         const val KEY_SONG_POSITION ="songPosition"
 
         fun getBundle(context: Context, song: ArrayList<Song>, songId: Long, position: Int): Bundle {
             //val intent = Intent(context, PlayerActivity::class.java)
             val bundle = Bundle().apply {
-                putParcelableArrayList(KEY_SONG, song)
+                putParcelableArrayList(KEY_SONGS, song)
                 putLong(KEY_SONG_ID, songId)
                 putInt(KEY_SONG_POSITION, position)
             }
@@ -236,11 +236,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
 
-        fun getIntent(context: Context, song: ArrayList<Song>, songId: Long, position: Int): Intent {
+        fun getIntent(context: Context, songList: ArrayList<Song>, songId: Long, position: Int): Intent {
             val intent = Intent(context, PlayerActivity::class.java)
-            intent.putParcelableArrayListExtra(KEY_SONG, song)
+            intent.putParcelableArrayListExtra(KEY_SONGS, songList)
             intent.putExtra(KEY_SONG_ID, songId)
-            intent.putExtra(KEY_SONG_POSITION, position)
+            intent.setAction(PlayerActivity.ACTION_VIEW);
+
+            //intent.putExtra(KEY_SONG_POSITION, position)
             return intent
         }
     }

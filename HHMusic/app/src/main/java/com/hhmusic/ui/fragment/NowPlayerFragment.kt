@@ -35,7 +35,7 @@ class NowPlayerFragment (private val context: MainActivity): Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val songList : List<Song> = arguments!!.getParcelableArrayList<Song>(MainActivity.KEY_SONG)
+        val songList : List<Song> = arguments!!.getParcelableArrayList<Song>(MainActivity.KEY_SONGS)
         val songId = arguments!!.getLong(MainActivity.KEY_SONG_ID)
         val songPosition: Int = arguments!!.getInt(MainActivity.KEY_SONG_POSITION)
 

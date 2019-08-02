@@ -16,6 +16,7 @@ data class Song(  @PrimaryKey @ColumnInfo(name = "id") var songId: Long = 0,
                     @ColumnInfo(name = "artistName") var artistName: String = "",
                     @ColumnInfo(name = "albumName") var albumName: String = "",
                     @ColumnInfo(name = "duration") var duration: Long = 0,
+                    @ColumnInfo(name = "uriStr") var uriStr: String = "",
                     @ColumnInfo(name = "imagePathStr") var imagePathStr: String = ""
 ) : Parcelable{
 
@@ -26,6 +27,7 @@ data class Song(  @PrimaryKey @ColumnInfo(name = "id") var songId: Long = 0,
         artistName = parcel.readString(),
         albumName = parcel.readString(),
         duration = parcel.readLong(),
+        uriStr = parcel.readString(),
         imagePathStr = parcel.readString()
     )
 
@@ -35,6 +37,7 @@ data class Song(  @PrimaryKey @ColumnInfo(name = "id") var songId: Long = 0,
         dest.writeString(artistName)
         dest.writeString(albumName)
         dest.writeLong(duration)
+        dest.writeString(uriStr)
         dest.writeString(imagePathStr)
     }
 
@@ -71,6 +74,9 @@ data class Song(  @PrimaryKey @ColumnInfo(name = "id") var songId: Long = 0,
                 }
                 if (values.containsKey("duration")) {
                     song.duration = values.getAsLong("duration")
+                }
+                if (values.containsKey("uriStr")) {
+                    song.uriStr = values.getAsString("uriStr")
                 }
                 if (values.containsKey("imagePathStr")) {
                     song.imagePathStr = values.getAsString("imagePathStr")

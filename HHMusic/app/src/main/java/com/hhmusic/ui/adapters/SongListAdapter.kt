@@ -69,6 +69,7 @@ class SongListAdapter(private val myActivity: MainActivity): ListAdapter<Song, S
                     oldItem.artistName == newItem.artistName &&
                     oldItem.title == newItem.title &&
                     oldItem.duration == newItem.duration &&
+                    oldItem.uriStr == newItem.uriStr &&
                     oldItem.imagePathStr == newItem.imagePathStr
         }
     }
