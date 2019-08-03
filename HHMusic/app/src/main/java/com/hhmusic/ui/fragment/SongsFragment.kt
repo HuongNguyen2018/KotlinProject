@@ -9,13 +9,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.hhmusic.databinding.FragmentSongListBinding
+import com.hhmusic.ui.activity.MainActivity
 import com.hhmusic.ui.adapters.SongListAdapter
 import com.hhmusic.utilities.InjectorUtils
 import com.hhmusic.viewmodels.PageViewModel
 import com.hhmusic.viewmodels.PlayListViewModel
 import com.hhmusic.viewmodels.SongViewModel
 
-class SongsFragment: Fragment() {
+class SongsFragment(private val myActivity: MainActivity): Fragment() {
 
 
     private lateinit var viewModel: SongViewModel
@@ -37,7 +38,8 @@ class SongsFragment: Fragment() {
         binding = FragmentSongListBinding.inflate(inflater,container, false)
 //        val context = context ?: return binding.root
 
-        adapter = SongListAdapter()
+
+        adapter = SongListAdapter(myActivity)
         binding.songListview.adapter = adapter
         subscribeUi()
         viewModel.getSongList()
@@ -51,6 +53,7 @@ class SongsFragment: Fragment() {
 
             songs -> if(songs != null) {
             adapter.submitList(songs)
+            adapter.setSongList(ArrayList(songs))
             //binding.adapter = adapter
             binding.songListview.adapter = adapter
             }
