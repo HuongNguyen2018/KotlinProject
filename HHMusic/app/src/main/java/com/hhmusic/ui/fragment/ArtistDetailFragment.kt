@@ -24,8 +24,14 @@ class ArtistDetailFragment(private val myActivity: MainActivity, private val son
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return super.onCreateView(inflater, container, savedInstanceState)
-        var view = inflater.inflate(R.layout.fragment_song_list, container, false)
+        var view = inflater.inflate(R.layout.dialog_fragment_detail, container, false)
 
+       var toolbar = view.findViewById<Toolbar>(R.id.toolbar)
+        toolbar.setTitle("Artist Detail")
+        toolbar.setNavigationIcon(android.R.drawable.ic_menu_close_clear_cancel)
+        toolbar.setNavigationOnClickListener(View.OnClickListener {
+            view -> dismiss()
+        })
         return view
     }
 
@@ -34,7 +40,7 @@ class ArtistDetailFragment(private val myActivity: MainActivity, private val son
 
         var adapter =  SongListAdapter(myActivity)
         adapter.setSongList(songList)
-        adapter.submitList(songList)
+        adapter.submitList(ArrayList(songList))
         var recyclerView = view.findViewById<RecyclerView>(R.id.songListview)
         recyclerView.adapter = adapter
 
