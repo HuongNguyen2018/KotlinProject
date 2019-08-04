@@ -3,8 +3,7 @@ package com.hhmusic.utilities
 import android.content.Context
 import com.hhmusic.data.HHMusicDatabase
 import com.hhmusic.data.repository.MusicRepository
-import com.hhmusic.viewmodels.PlayListViewModelFactory
-import com.hhmusic.viewmodels.SongViewModelFactory
+import com.hhmusic.viewmodels.*
 
 object InjectorUtils {
 
@@ -17,10 +16,20 @@ object InjectorUtils {
         val repository = getMusicRepository(context)
         return SongViewModelFactory(repository)
     }
+    fun provideArtistViewModelFactory(context: Context): ArtistViewModelFactory {
+        val repository = getMusicRepository(context)
+        return ArtistViewModelFactory(repository)
+    }
 
+    fun provideAlbumViewModelFactory(context: Context): AlbumViewModelFactory {
+        val repository = getMusicRepository(context)
+        return AlbumViewModelFactory(repository)
+    }
     private fun getMusicRepository(context: Context): MusicRepository {
         return MusicRepository.getInstance(
             HHMusicDatabase.getInstance(context.applicationContext).playListDao(),
-            HHMusicDatabase.getInstance(context.applicationContext).songsDao())
+            HHMusicDatabase.getInstance(context.applicationContext).songsDao(),
+            HHMusicDatabase.getInstance(context.applicationContext).artistsDao(),
+            HHMusicDatabase.getInstance(context.applicationContext).albumDao())
     }
 }
