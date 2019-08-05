@@ -41,26 +41,34 @@ class SongListAdapter(private val myActivity: MainActivity): ListAdapter<Song, S
     override fun onBindViewHolder(holder: SongListAdapter.SongListViewHolder, position: Int) {
 
         val song: Song = getItem(position)
+
+
 //        var uri = Uri.parse("content://media/external/audio/media/" + song.songId + "/albumart")
 //        System.out.println("url = " + song.imagePathStr)
 //        System.out.println("uri = " +uri.path)
+//
+//        // Way 1: load cover art -> ok
 //        song.imagePathStr = "content://media/external/audio/media/" + song.songId + "/albumart"
 
 //        val res = myActivity.getContentResolver()
 //        val inputStream = res.openInputStream(Uri.parse(song.imagePathStr))
-//        val artwork = BitmapFactory.decodeStream(inputStream)
+//        val songImage = BitmapFactory.decodeStream(inputStream)
+
+
+        // Way 2: load cover art -> ok
 
         val metaRetriver = MediaMetadataRetriever()
 
         metaRetriver.setDataSource(myActivity, Uri.parse(song.uriStr))
         System.out.println(song.uriStr)
         val picArray = metaRetriver.embeddedPicture
-       @Nullable
+
         var songImage : Bitmap? = null;
         if (picArray!= null) {
             songImage = BitmapFactory.decodeByteArray(picArray, 0, picArray.size)
         }
         holder.apply {
+           // bind(createOnClickListener(song, position), song, songImage)
             bind(createOnClickListener(song, position), song, songImage)
             itemView.tag = song
         }
@@ -86,12 +94,11 @@ class SongListAdapter(private val myActivity: MainActivity): ListAdapter<Song, S
      class SongListViewHolder(private val binding: SongListItemBinding): RecyclerView.ViewHolder(binding.root) {
 
          fun bind(listener: View.OnClickListener, item: Song, artwork: Bitmap?) {
+       // fun bind(listener: View.OnClickListener, item: Song, artwork: Bitmap?) {
              binding.apply {
                  clickListener = listener
                  songItem = item
-                 //binding.imageAlbum.setImageURI(Uri.parse(item.imagePathStr))
-//                 var  image=Drawable.createFromPath(item.imagePathStr);
-//                 binding.imageAlbum.setImageDrawable(image)
+               //  binding.imageAlbum.setImageURI(Uri.parse(item.imagePathStr))
                  if(artwork!= null)
                      binding.imageAlbum.setImageBitmap(artwork)
                  executePendingBindings()

@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private lateinit var tabs: TabLayout
     private lateinit var mAccount: Account
+    private lateinit var miniMusicView: View
 
     private var playerManager : PlayerManager? = null
 
@@ -72,6 +73,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // create instance of PlayerManager to play music
         playerManager = PlayerManager.getInstance(applicationContext, null)
         (application as HHMusicApplication).setPlayerManager(playerManager)
+
+        miniMusicView = findViewById(R.id.layout_mini_player)
     }
 
 
@@ -228,9 +231,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intent)
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        val miniPlayPauseBtn: ImageButton = miniMusicView?.findViewById<View>(R.id.play_pause) as ImageButton
+        if (playerManager?.isPlaying!!) {
+            miniPlayPauseBtn.setImageResource(android.R.drawable.ic_media_pause)
+        } else {
+            miniPlayPauseBtn.setImageResource(android.R.drawable.ic_media_play)
+        }
+    }
     fun setupMiniMusic(song: Song) {
         /* mini music player */
-        val miniMusicView : View = findViewById(R.id.layout_mini_player)
+        //val miniMusicView : View = findViewById(R.id.layout_mini_player)
         miniMusicView?.let { miniMusic ->
             miniMusicView.visibility = View.VISIBLE
 
@@ -241,6 +254,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             miniArtist?.text = song.artistName
 
             val miniPlayPauseBtn: ImageButton = miniMusicView?.findViewById<View>(R.id.play_pause) as ImageButton
+            if (playerManager?.isPlaying!!) {
+                miniPlayPauseBtn.setImageResource(android.R.drawable.ic_media_play)
+            } else {
+                miniPlayPauseBtn.setImageResource(android.R.drawable.ic_media_pause)
+            }
+
             miniPlayPauseBtn.setOnClickListener(View.OnClickListener {
                 var btn: ImageButton = it as ImageButton
 
