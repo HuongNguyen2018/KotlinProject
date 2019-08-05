@@ -263,6 +263,7 @@ class NowPlayerFragment: Fragment(), PlaybackPreparer,
     }
 
     private fun showToast(message: String) {
+        if (context != null)
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
