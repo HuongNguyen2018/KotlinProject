@@ -1,7 +1,5 @@
 package com.hhmusic.ui.fragment
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,18 +7,23 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.hhmusic.ui.activity.PlayerActivity
-import com.hhmusic.utilities.InjectorUtils
-import com.hhmusic.viewmodels.PlayListViewModel
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.widget.EditText
 
+import com.hhmusic.ui.activity.PlayerActivity
+import com.hhmusic.utilities.InjectorUtils
+import com.hhmusic.viewmodels.PlayListViewModel
+import com.hhmusic.data.entities.Song
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
-class AddPlayListFragment (private val myActivity: PlayerActivity) : DialogFragment() {
+
+class AddPlayListFragment (private val myActivity: PlayerActivity, private val song: Song) : DialogFragment() {
 
     lateinit private var viewModel: PlayListViewModel
     lateinit private var listView: ListView
@@ -70,7 +73,9 @@ class AddPlayListFragment (private val myActivity: PlayerActivity) : DialogFragm
         viewModel.getPlayLists().observe(myActivity, Observer {
             it?.let {
                 for (i in it.indices) {
-                    values += it[i].name
+                    if (!it[i].name.equals("Most played") &&
+                        !it[i].name.equals("Recently played"))
+                        values += it[i].name
                 }
 
                 adapter.clear()
@@ -100,7 +105,11 @@ class AddPlayListFragment (private val myActivity: PlayerActivity) : DialogFragm
                 alertDialogBuilder
                     .setCancelable(false)
                     .setPositiveButton("Create New", DialogInterface.OnClickListener() { dialog, which ->
-                        Toast.makeText(myActivity, userInput.getText(), Toast.LENGTH_SHORT).show()
+                        GlobalScope.launch () {
+                            viewModel.addNewPlayList(userInput.getText().toString())
+                        }
+                        dialog.dismiss()
+                        Toast.makeText(myActivity, "Created new PlayList " + userInput.getText() + "successfully", Toast.LENGTH_SHORT).show()
                     })
                     .setNegativeButton("Cancel", DialogInterface.OnClickListener() { dialog, which ->
                         dialog.cancel()
@@ -116,8 +125,11 @@ class AddPlayListFragment (private val myActivity: PlayerActivity) : DialogFragm
                 alertDialog.show()
 
             } else {
-                Toast.makeText(myActivity, "User chose " + values[position], Toast.LENGTH_SHORT).show()
-
+                GlobalScope.launch () {
+                    viewModel.addSongToPlayList(song.songId, values[position].trim())
+                }
+                dialog.dismiss()
+                Toast.makeText(myActivity, "Added songId " + song.songId + " into PlayList " + values[position] + "successfully", Toast.LENGTH_SHORT).show()
             }
         })
     }

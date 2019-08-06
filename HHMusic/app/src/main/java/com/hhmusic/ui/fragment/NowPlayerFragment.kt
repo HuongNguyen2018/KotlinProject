@@ -153,7 +153,7 @@ class NowPlayerFragment: Fragment(), PlaybackPreparer,
 
     private fun createAddPlayListListener() : View.OnClickListener {
         return View.OnClickListener {
-            var fragment = AddPlayListFragment(activity as PlayerActivity)
+            var fragment = AddPlayListFragment(activity as PlayerActivity, mSong!!)
             fragment.show(activity?.supportFragmentManager, "artist detail")
         }
     }
