@@ -109,6 +109,9 @@ class AddPlayListFragment (private val myActivity: PlayerActivity) : DialogFragm
                 // create alert dialog
                 val alertDialog = alertDialogBuilder.create()
 
+                // close current fragment dialog before open a new dialog
+                this.dismiss()
+
                 // show it
                 alertDialog.show()
 
