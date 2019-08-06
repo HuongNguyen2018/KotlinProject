@@ -45,7 +45,6 @@ class AlbumDetailFragment(private val myActivity: MainActivity, private val song
         recyclerView.adapter = adapter
 
         adapter.notifyDataSetChanged()
-
     }
 
 }

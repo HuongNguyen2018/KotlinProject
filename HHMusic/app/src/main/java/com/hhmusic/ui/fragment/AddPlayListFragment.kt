@@ -1,5 +1,6 @@
 package com.hhmusic.ui.fragment
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import androidx.lifecycle.ViewModelProviders
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.widget.EditText
+import androidx.fragment.app.FragmentActivity
 
 import com.hhmusic.ui.activity.PlayerActivity
 import com.hhmusic.utilities.InjectorUtils
@@ -20,7 +22,7 @@ import com.hhmusic.data.entities.Song
 import kotlinx.coroutines.*
 
 
-class AddPlayListFragment (private val myActivity: PlayerActivity, private val song: Song) : DialogFragment() {
+class AddPlayListFragment (private val myActivity: FragmentActivity, private val song: Song) : DialogFragment() {
 
     lateinit private var viewModel: PlayListViewModel
     lateinit private var listView: ListView
