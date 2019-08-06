@@ -22,8 +22,11 @@ import android.widget.EditText
 
 class AddPlayListFragment (private val myActivity: PlayerActivity) : DialogFragment() {
 
-    lateinit  var viewModel: PlayListViewModel
-    private var listView: ListView? = null
+    lateinit private var viewModel: PlayListViewModel
+    lateinit private var listView: ListView
+    lateinit private var adapter: ArrayAdapter<String>
+
+    private var values: List<String> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,10 +44,9 @@ class AddPlayListFragment (private val myActivity: PlayerActivity) : DialogFragm
                 view -> dismiss()
         })
 
-        var values : List<String> = listOf()
         values += "Create New PlayList"
 
-        var adapter : ArrayAdapter<String> = ArrayAdapter<String>(
+        adapter = ArrayAdapter<String>(
                         myActivity!!,
                         com.hhmusic.R.layout.simple_list_item_2,
                         //android.R.layout.simple_list_item_1,
@@ -56,6 +58,12 @@ class AddPlayListFragment (private val myActivity: PlayerActivity) : DialogFragm
         listView = viewRoot.findViewById(com.hhmusic.R.id.list)
         listView?.setAdapter(adapter)
 
+
+        return viewRoot
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val factory = InjectorUtils.provideViewModelFactory(myActivity)
         viewModel = ViewModelProviders.of(myActivity, factory).get(PlayListViewModel::class.java)
@@ -70,8 +78,6 @@ class AddPlayListFragment (private val myActivity: PlayerActivity) : DialogFragm
                 adapter.notifyDataSetChanged()
             }
         })
-
-
 
         listView?.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
             // ListView Clicked item value
@@ -90,8 +96,8 @@ class AddPlayListFragment (private val myActivity: PlayerActivity) : DialogFragm
 
                 val userInput = promptsView.findViewById(com.hhmusic.R.id.editTextDialogUserInput) as EditText
 
-				// set dialog message
-				alertDialogBuilder
+                // set dialog message
+                alertDialogBuilder
                     .setCancelable(false)
                     .setPositiveButton("Create New", DialogInterface.OnClickListener() { dialog, which ->
                         Toast.makeText(myActivity, userInput.getText(), Toast.LENGTH_SHORT).show()
@@ -111,7 +117,5 @@ class AddPlayListFragment (private val myActivity: PlayerActivity) : DialogFragm
 
             }
         })
-
-        return viewRoot
     }
 }
