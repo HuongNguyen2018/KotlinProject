@@ -101,6 +101,9 @@ class SongListAdapter(private val myActivity: MainActivity): ListAdapter<Song, S
                //  binding.imageAlbum.setImageURI(Uri.parse(item.imagePathStr))
                  if(artwork!= null)
                      binding.imageAlbum.setImageBitmap(artwork)
+                 else {
+                     binding.imageAlbum.setImageResource(com.hhmusic.R.drawable.ic_tab_2)
+                 }
                  executePendingBindings()
              }
          }
