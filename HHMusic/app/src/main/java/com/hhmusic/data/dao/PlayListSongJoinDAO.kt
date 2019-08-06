@@ -24,4 +24,8 @@ interface PlayListSongJoinDAO {
 
     @Query("select s.* from songs s, playList_song_join j where s.id = j.songId and j.playListId= :playListId")
     fun getSongsForPlayList(playListId: Long): LiveData<List<Song>>
+
+    // to check if a song has been inserted into a playlist already
+    @Query("select * from playList_song_join j where j.playListId= :playListId and j.songId = :songId")
+    fun getRecordByPlayListIdAndSongId(playListId: Long, songId: Long): PlayListSongJoin
 }

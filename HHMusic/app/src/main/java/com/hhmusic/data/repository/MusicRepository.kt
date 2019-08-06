@@ -39,10 +39,13 @@ class MusicRepository private constructor(private val playListDao: PlayListDAO,
             var song: Song = songsDao.selectSongById(songId)
             var playLists: List<PlayList> = playListDao.selectByName(playListName)
             if ((playLists.size == 1) && (song != null)) {
-                var playListSong = PlayListSongJoin(playLists.get(0).playListId, song.songId)
-                playListSongJoinDao.insert(playListSong)
+                var existedRecord : PlayListSongJoin = playListSongJoinDao.getRecordByPlayListIdAndSongId(playLists.get(0).playListId, song.songId)
+                if (existedRecord == null) {
+                    var playListSong = PlayListSongJoin(playLists.get(0).playListId, song.songId)
+                    playListSongJoinDao.insert(playListSong)
 
-                result = song.songId
+                    result = song.songId
+                }
             }
 
             return result

@@ -17,10 +17,7 @@ import com.hhmusic.ui.activity.PlayerActivity
 import com.hhmusic.utilities.InjectorUtils
 import com.hhmusic.viewmodels.PlayListViewModel
 import com.hhmusic.data.entities.Song
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
 class AddPlayListFragment (private val myActivity: PlayerActivity, private val song: Song) : DialogFragment() {
@@ -106,10 +103,13 @@ class AddPlayListFragment (private val myActivity: PlayerActivity, private val s
                     .setCancelable(false)
                     .setPositiveButton("Create New", DialogInterface.OnClickListener() { dialog, which ->
                         GlobalScope.launch () {
-                            viewModel.addNewPlayList(userInput.getText().toString())
+                            var result = viewModel.addNewPlayList(userInput.getText().toString())
+                            withContext(Dispatchers.Main) {
+                                if (result > 0)
+                                    Toast.makeText(myActivity, "Created new PlayList " + userInput.getText() + "successfully", Toast.LENGTH_SHORT).show()
+                            }
                         }
                         dialog.dismiss()
-                        Toast.makeText(myActivity, "Created new PlayList " + userInput.getText() + "successfully", Toast.LENGTH_SHORT).show()
                     })
                     .setNegativeButton("Cancel", DialogInterface.OnClickListener() { dialog, which ->
                         dialog.cancel()
@@ -126,10 +126,13 @@ class AddPlayListFragment (private val myActivity: PlayerActivity, private val s
 
             } else {
                 GlobalScope.launch () {
-                    viewModel.addSongToPlayList(song.songId, values[position].trim())
+                    var result = viewModel.addSongToPlayList(song.songId, values[position].trim())
+                    withContext(Dispatchers.Main) {
+                        if (result > 0)
+                            Toast.makeText(myActivity, "Added songId " + song.songId + " into PlayList " + values[position] + "successfully", Toast.LENGTH_SHORT).show()
+                    }
                 }
                 dialog.dismiss()
-                Toast.makeText(myActivity, "Added songId " + song.songId + " into PlayList " + values[position] + "successfully", Toast.LENGTH_SHORT).show()
             }
         })
     }
