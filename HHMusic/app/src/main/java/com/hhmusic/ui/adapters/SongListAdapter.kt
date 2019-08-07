@@ -110,7 +110,8 @@ class SongListAdapter(private val myActivity: MainActivity):
     private fun createOnClickListener(song: Song, position: Int): View.OnClickListener {
         return View.OnClickListener {
             var playerManager = (myActivity.application as HHMusicApplication).getPlayerManager()
-            playerManager?.setSongList(ArrayList(songList))
+            playerManager?.removeMediaSource()
+            playerManager?.setSongList(ArrayList(songList), position)
 
             //val bundle =  MainActivity.getIntent(it.context, ArrayList(songList), song.songId, position)
             val bundle =  MainActivity.getIntent(it.context, song)
