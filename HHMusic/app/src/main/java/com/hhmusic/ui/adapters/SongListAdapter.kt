@@ -14,7 +14,6 @@ import com.hhmusic.databinding.SongListItemBinding
 import com.hhmusic.ui.activity.MainActivity
 import android.graphics.BitmapFactory
 import android.graphics.Bitmap
-import android.media.MediaMetadataRetriever
 import android.widget.PopupMenu;
 import android.R
 import android.view.MenuItem
@@ -23,7 +22,6 @@ import androidx.lifecycle.ViewModelProviders
 import com.hhmusic.ui.fragment.AddPlayListFragment
 import com.hhmusic.ui.fragment.AlbumDetailFragment
 import com.hhmusic.ui.fragment.ArtistDetailFragment
-import com.hhmusic.ui.fragment.SongsFragment
 import com.hhmusic.utilities.InjectorUtils
 import com.hhmusic.utilities.MediaStoreUtils
 import com.hhmusic.viewmodels.AlbumViewModel
@@ -66,31 +64,30 @@ class SongListAdapter(private val myActivity: MainActivity):
 
         val song: Song = getItem(position)
 
-        /*
+
 //        var uri = Uri.parse("content://media/external/audio/media/" + song.songId + "/albumart")
 //        System.out.println("url = " + song.imagePathStr)
 //        System.out.println("uri = " +uri.path)
 //
 //        // Way 1: load cover art -> ok
-//        song.imagePathStr = "content://media/external/audio/media/" + song.songId + "/albumart"
+        song.imagePathStr = "content://media/external/audio/media/" + song.songId + "/albumart"
 
-//        val res = myActivity.getContentResolver()
-//        val inputStream = res.openInputStream(Uri.parse(song.imagePathStr))
-//        val songImage = BitmapFactory.decodeStream(inputStream)
-*/
+        val res = myActivity.getContentResolver()
+        val inputStream = res.openInputStream(Uri.parse(song.imagePathStr))
+        val songImage = BitmapFactory.decodeStream(inputStream)
 
+        /*
         // Way 2: load cover art -> ok
-
-        val metaRetriver = MediaMetadataRetriever()
-
-        metaRetriver.setDataSource(myActivity, Uri.parse(song.uriStr))
-        //System.out.println(song.uriStr)
-        val picArray = metaRetriver.embeddedPicture
-
-        var songImage : Bitmap? = null;
-        if (picArray!= null) {
-            songImage = BitmapFactory.decodeByteArray(picArray, 0, picArray.size)
-        }
+//        val metaRetriver = MediaMetadataRetriever()
+//
+//        metaRetriver.setDataSource(myActivity, Uri.parse(song.uriStr))
+//        //System.out.println(song.uriStr)
+//        val picArray = metaRetriver.embeddedPicture
+//
+//        var songImage : Bitmap? = null;
+//        if (picArray!= null) {
+//            songImage = BitmapFactory.decodeByteArray(picArray, 0, picArray.size)
+//        }*/
 
         holder.apply {
            // bind(createOnClickListener(song, position), song, songImage)
@@ -164,7 +161,8 @@ class SongListAdapter(private val myActivity: MainActivity):
      private fun createOnClickListener(song: Song, position: Int): View.OnClickListener {
         return View.OnClickListener {
             var playerManager = (myActivity.application as HHMusicApplication).getPlayerManager()
-            playerManager?.setSongList(ArrayList(songList))
+            playerManager?.removeMediaSource()
+            playerManager?.setSongList(ArrayList(songList), position)
 
             //val bundle =  MainActivity.getIntent(it.context, ArrayList(songList), song.songId, position)
             val bundle =  MainActivity.getIntent(it.context, song)
@@ -190,7 +188,7 @@ class SongListAdapter(private val myActivity: MainActivity):
                  if(artwork!= null)
                      binding.imageAlbum.setImageBitmap(artwork)
                  else {
-                     binding.imageAlbum.setImageResource(com.hhmusic.R.drawable.ic_tab_2)
+                     binding.imageAlbum.setImageBitmap(null)
                  }
                  executePendingBindings()
              }
