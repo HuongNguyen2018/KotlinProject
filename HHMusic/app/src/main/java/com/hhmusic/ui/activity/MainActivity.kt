@@ -17,22 +17,18 @@ import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.View
 import android.widget.ImageButton
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.hhmusic.HHMusicApplication
 import com.hhmusic.R
 import com.hhmusic.ui.activity.ui.main.SectionsPagerAdapter
 
 import com.hhmusic.data.entities.Song
-import com.hhmusic.ui.fragment.NowPlayerFragment
 import com.hhmusic.utilities.PlayerManager
 import com.hhmusic.utilities.SyncUtils
-import kotlinx.android.synthetic.main.nav_header_main.view.*
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {

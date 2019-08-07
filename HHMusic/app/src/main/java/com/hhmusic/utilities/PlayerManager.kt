@@ -74,7 +74,6 @@ class PlayerManager private constructor(
         }
     }
 
-    // no need to expose wrapped ExoPlayer
     fun getPlayer() = player
 
     fun getSongList(): ArrayList<Song>? {

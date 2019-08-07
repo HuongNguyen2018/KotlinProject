@@ -13,6 +13,4 @@ interface ArtistDAO {
 
     @Query("select count(*) as numberOfTrack, artistId, artistName, id as songId from songs group by artistId")
     fun getAllArtistTrackSong(): LiveData<List<Artist>>
-
-
 }

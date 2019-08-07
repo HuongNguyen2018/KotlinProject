@@ -31,6 +31,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 
 class SongListAdapter(private val myActivity: MainActivity):
@@ -55,15 +58,11 @@ class SongListAdapter(private val myActivity: MainActivity):
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongListViewHolder {
-
         return  SongListViewHolder(SongListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false ))
-
     }
 
     override fun onBindViewHolder(holder: SongListAdapter.SongListViewHolder, position: Int) {
-
         val song: Song = getItem(position)
-
 
 //        var uri = Uri.parse("content://media/external/audio/media/" + song.songId + "/albumart")
 //        System.out.println("url = " + song.imagePathStr)
@@ -173,7 +172,7 @@ class SongListAdapter(private val myActivity: MainActivity):
 
             Toast.makeText(HHMusicApplication.applicationContext(), "Play song", Toast.LENGTH_SHORT).show()
         }
-    }
+     }
 
      class SongListViewHolder(private val binding: SongListItemBinding): RecyclerView.ViewHolder(binding.root) {
 

@@ -1,43 +1,38 @@
 package com.hhmusic.ui.fragment
 
-import android.content.Intent
-import android.net.Uri
+import java.util.Date;
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Pair
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.DataBindingUtil.setContentView
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.mediacodec.MediaCodecRenderer
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil
 import com.google.android.exoplayer2.source.BehindLiveWindowException
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.ui.PlayerControlView
-import com.google.android.exoplayer2.upstream.FileDataSourceFactory
 import com.google.android.exoplayer2.util.ErrorMessageProvider
 import com.google.android.exoplayer2.util.Util
 import com.hhmusic.HHMusicApplication
-import com.hhmusic.R
 import com.hhmusic.data.entities.Song
-import com.hhmusic.databinding.ContentPlayerBinding
 import com.hhmusic.databinding.FragmentNowPlayerBinding
 import com.hhmusic.ui.activity.MainActivity
 import com.hhmusic.ui.activity.PlayerActivity
+import com.hhmusic.utilities.InjectorUtils
 import com.hhmusic.utilities.PlayerManager
+import com.hhmusic.viewmodels.SongViewModel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
-class NowPlayerFragment: Fragment(), PlaybackPreparer,
+class NowPlayingFragment(private val myActivity: FragmentActivity): Fragment(), PlaybackPreparer,
                             PlayerControlView.VisibilityListener { //, View.OnClickListener {
 
     companion object {
@@ -60,12 +55,16 @@ class NowPlayerFragment: Fragment(), PlaybackPreparer,
     private var playerManager: PlayerManager? = null
 
     private var mSong: Song? = null
+    lateinit var songViewModel: SongViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity!!.setTitle(TAG)
 
         mSong = arguments!!.getParcelable<Parcelable>(MainActivity.KEY_SONGS) as Song
+
+        val factory = InjectorUtils.provideViewModelFactory(myActivity)
+        songViewModel = ViewModelProviders.of(myActivity, factory).get(SongViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -87,10 +86,6 @@ class NowPlayerFragment: Fragment(), PlaybackPreparer,
         }
 
         mSong?.let {
-//            var songList: ArrayList<Song> = ArrayList()
-//            songList.add(mSong!!)
-//            playerManager?.setSongList(songList)
-
             // bind song object onto UI
             binding.contentPlayer.songItem = mSong
         }
@@ -234,7 +229,18 @@ class NowPlayerFragment: Fragment(), PlaybackPreparer,
             if(binding!=null && binding.contentPlayer!= null && playerManager!=null) {
                 var song: Song? = playerManager?.getSongList()?.get(playerManager?.getPlayer()?.currentWindowIndex ?: 0)
                 song?.let {
-                    binding.contentPlayer.songItem = it
+                    if (it?.songId == mSong?.songId) {
+                        // update Most played Info
+                        it.playedNumber += 1
+                        // update Recently played Info
+                        it.playedAt = Date(System.currentTimeMillis())
+                        GlobalScope.launch {
+                            songViewModel?.updateSong(it)
+                        }
+                    }
+
+                    mSong = it
+                    binding.contentPlayer.songItem = mSong
                     // update LiveDate in PlayerManger so that MiniMusic bottom toolbar can observe
                     playerManager?.setCurrentPlayedSong(it)
                 }
