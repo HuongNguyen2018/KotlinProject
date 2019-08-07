@@ -46,25 +46,25 @@ class SongListAdapter(private val myActivity: MainActivity):
 //        System.out.println("uri = " +uri.path)
 //
 //        // Way 1: load cover art -> ok
-//        song.imagePathStr = "content://media/external/audio/media/" + song.songId + "/albumart"
+        song.imagePathStr = "content://media/external/audio/media/" + song.songId + "/albumart"
 
-//        val res = myActivity.getContentResolver()
-//        val inputStream = res.openInputStream(Uri.parse(song.imagePathStr))
-//        val songImage = BitmapFactory.decodeStream(inputStream)
+        val res = myActivity.getContentResolver()
+        val inputStream = res.openInputStream(Uri.parse(song.imagePathStr))
+        val songImage = BitmapFactory.decodeStream(inputStream)
 
 
         // Way 2: load cover art -> ok
 
-        val metaRetriver = MediaMetadataRetriever()
-
-        metaRetriver.setDataSource(myActivity, Uri.parse(song.uriStr))
-        //System.out.println(song.uriStr)
-        val picArray = metaRetriver.embeddedPicture
-
-        var songImage : Bitmap? = null;
-        if (picArray!= null) {
-            songImage = BitmapFactory.decodeByteArray(picArray, 0, picArray.size)
-        }
+//        val metaRetriver = MediaMetadataRetriever()
+//
+//        metaRetriver.setDataSource(myActivity, Uri.parse(song.uriStr))
+//        //System.out.println(song.uriStr)
+//        val picArray = metaRetriver.embeddedPicture
+//
+//        var songImage : Bitmap? = null;
+//        if (picArray!= null) {
+//            songImage = BitmapFactory.decodeByteArray(picArray, 0, picArray.size)
+//        }
 
         holder.apply {
            // bind(createOnClickListener(song, position), song, songImage)
@@ -137,7 +137,7 @@ class SongListAdapter(private val myActivity: MainActivity):
                  if(artwork!= null)
                      binding.imageAlbum.setImageBitmap(artwork)
                  else {
-                     binding.imageAlbum.setImageResource(com.hhmusic.R.drawable.ic_tab_2)
+                     binding.imageAlbum.setImageBitmap(null)
                  }
                  executePendingBindings()
              }
