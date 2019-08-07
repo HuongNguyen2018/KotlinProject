@@ -2,6 +2,8 @@ package com.hhmusic.utilities
 
 import android.content.Context
 import android.net.Uri
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
@@ -10,6 +12,7 @@ import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.FileDataSourceFactory
+import com.hhmusic.data.entities.Album
 import com.hhmusic.data.entities.Song
 
 class PlayerManager private constructor(
@@ -20,6 +23,9 @@ class PlayerManager private constructor(
 
     private var songList: ArrayList<Song>? = null
     private var mediaSource: MediaSource? = null
+
+    // this is for miniMusic bottom toolbar, and will be obsered by MainActivity
+    private var currentPlayedSong = MutableLiveData<Song>()
 
     private var startAutoPlay: Boolean = true
     private var startWindow: Int = C.INDEX_UNSET
@@ -46,7 +52,7 @@ class PlayerManager private constructor(
         }
     }
 
-    public fun initializePlayer() {
+    fun initializePlayer() {
         player?:let{
             player = ExoPlayerFactory.newSimpleInstance(
                 context, DefaultRenderersFactory(context)
@@ -96,6 +102,13 @@ class PlayerManager private constructor(
         }
     }
 
+    fun setCurrentPlayedSong(song: Song) {
+        currentPlayedSong.value = song
+    }
+    fun getCurrentPlayedSong() : LiveData<Song> {
+        return currentPlayedSong
+    }
+
     fun setPlayerEventListener(_listener: Player.EventListener) {
         playerEventListener = _listener
         player?.addListener(playerEventListener)
@@ -121,10 +134,6 @@ class PlayerManager private constructor(
         }
     }
 
-    fun setCurrentSong(currentSong: Int) {
-        if (currentSong <= songList!!.size && currentSong >=0 )
-            currentIndex = currentSong;
-    }
     fun retry() {
         player?.retry()
         isPlaying = true
@@ -142,11 +151,9 @@ class PlayerManager private constructor(
         }
     }
 
-    fun togglePlayStop() {
-        if (isPlaying)
-            stop()
-        else
-            retry()
+    fun setCurrentSong(currentSong: Int) {
+        if (currentSong <= songList!!.size && currentSong >=0 )
+            currentIndex = currentSong;
     }
 
     fun updateStartPosition(_startAutoPlay: Boolean, _startWindow: Int, _startPosition: Long) {

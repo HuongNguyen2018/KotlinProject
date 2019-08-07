@@ -20,6 +20,7 @@ import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -241,6 +242,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             miniPlayPauseBtn.setImageResource(android.R.drawable.ic_media_play)
         }
     }
+
     fun setupMiniMusic(song: Song) {
         /* mini music player */
         //val miniMusicView : View = findViewById(R.id.layout_mini_player)
@@ -270,6 +272,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     playerManager?.retry()
                     btn.setImageResource(android.R.drawable.ic_media_pause)
                 }
+            })
+
+            // observe the track change in PlayerManager
+            playerManager?.getCurrentPlayedSong()?.observe(this, Observer {
+                miniTitle?.text = it.title
+                miniArtist?.text = it.artistName
             })
         }
     }

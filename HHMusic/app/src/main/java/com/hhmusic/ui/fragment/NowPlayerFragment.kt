@@ -159,10 +159,6 @@ class NowPlayerFragment: Fragment(), PlaybackPreparer,
             fragment.show(activity?.supportFragmentManager, "Now Playing list ")
         }
     }
-    //override fun onClick(view: View) {
-    //    playerManager?.togglePlayStop()
-    //}
-
 
     // PlaybackControlView.PlaybackPreparer implementation
     override fun preparePlayback() {
@@ -235,8 +231,14 @@ class NowPlayerFragment: Fragment(), PlaybackPreparer,
         }
 
         override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {
-            if(binding!=null && binding.contentPlayer!= null && playerManager!=null)
-               binding.contentPlayer.songItem = playerManager?.getSongList()?.get(playerManager?.getPlayer()?.currentWindowIndex?:0)
+            if(binding!=null && binding.contentPlayer!= null && playerManager!=null) {
+                var song: Song? = playerManager?.getSongList()?.get(playerManager?.getPlayer()?.currentWindowIndex ?: 0)
+                song?.let {
+                    binding.contentPlayer.songItem = it
+                    // update LiveDate in PlayerManger so that MiniMusic bottom toolbar can observe
+                    playerManager?.setCurrentPlayedSong(it)
+                }
+            }
         }
     }
 
