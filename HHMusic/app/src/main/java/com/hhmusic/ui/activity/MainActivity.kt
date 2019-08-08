@@ -7,6 +7,7 @@ import android.accounts.Account
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.text.Layout
 import androidx.core.view.GravityCompat
 import androidx.appcompat.app.ActionBarDrawerToggle
 import android.view.MenuItem
@@ -17,6 +18,7 @@ import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.View
 import android.widget.ImageButton
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.Observer
@@ -38,7 +40,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var miniMusicView: View
     private lateinit var miniPlayPauseBtn: ImageButton
 
-        private var playerManager : PlayerManager? = null
+    private var playerManager : PlayerManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -240,28 +242,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         miniMusicView?.let { miniMusic ->
             miniMusicView.visibility = View.VISIBLE
 
+            miniMusicView?.setOnClickListener(View.OnClickListener {
+                val intent =  getIntent(it.context, PlayerActivity.ACTION_PLAY_FROM_MINI_MUSIC)
+                openPlayerScreen(intent)
+            })
+
             val miniTitle: TextView = miniMusic.findViewById<View>(R.id.song_title) as TextView
             miniTitle?.text = song.title
 
             val miniArtist: TextView = miniMusic.findViewById<View>(R.id.artist) as TextView
             miniArtist?.text = song.artistName
 
-
-            if (playerManager?.isPlaying!!) {
-                miniPlayPauseBtn.setImageResource(android.R.drawable.ic_media_play)
-            } else {
-                miniPlayPauseBtn.setImageResource(android.R.drawable.ic_media_pause)
-            }
-
             miniPlayPauseBtn.setOnClickListener(View.OnClickListener {
                 var btn: ImageButton = it as ImageButton
 
                 if (playerManager?.isPlaying!!) {
-                    playerManager?.stop()
+                    playerManager?.pause()
+
                     btn.setImageResource(android.R.drawable.ic_media_play)
                 } else {
-                    playerManager?.retry()
+                    playerManager?.resume()
+
                     btn.setImageResource(android.R.drawable.ic_media_pause)
+
                 }
             })
 
@@ -270,36 +273,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 miniTitle?.text = it.title
                 miniArtist?.text = it.artistName
             })
+
+            // observe the playing status (onPlaying or stopped) of player in PlayerManager
+            playerManager?.getCurrentPlayedStatus()?.observe(this, Observer {
+                if (!it) {
+                    miniPlayPauseBtn.setImageResource(android.R.drawable.ic_media_play)
+                } else {
+                    miniPlayPauseBtn.setImageResource(android.R.drawable.ic_media_pause)
+                }
+            })
         }
     }
 
     companion object {
 
         const val KEY_SONGS = "song"
-        const val KEY_SONG_ID ="songId"
-        const val KEY_SONG_POSITION ="songPosition"
 
-        fun getBundle(context: Context, song: ArrayList<Song>, songId: Long, position: Int): Bundle {
-            //val intent = Intent(context, PlayerActivity::class.java)
-            val bundle = Bundle().apply {
-                putParcelableArrayList(KEY_SONGS, song)
-                putLong(KEY_SONG_ID, songId)
-                putInt(KEY_SONG_POSITION, position)
-            }
+        fun getIntent(context: Context, action: String, song: Song): Intent {
+            val intent = Intent(context, PlayerActivity::class.java)
+            intent.putExtra(KEY_SONGS, song)
+            intent.setAction(action);
 
-            return bundle
+            return intent
         }
 
-
-        //fun getIntent(context: Context, songList: ArrayList<Song>, songId: Long, position: Int): Intent {
-        fun getIntent(context: Context, song: Song): Intent {
+        fun getIntent(context: Context, action: String): Intent {
             val intent = Intent(context, PlayerActivity::class.java)
-            //intent.putParcelableArrayListExtra(KEY_SONGS, songList)
-            intent.putExtra(KEY_SONGS, song)
-            //intent.putExtra(KEY_SONG_ID, songId)
-            intent.setAction(PlayerActivity.ACTION_VIEW);
+            intent.setAction(action);
 
-            //intent.putExtra(KEY_SONG_POSITION, position)
             return intent
         }
     }

@@ -19,6 +19,7 @@ import android.R
 import android.view.MenuItem
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.hhmusic.ui.activity.PlayerActivity
 import com.hhmusic.ui.fragment.AddPlayListFragment
 import com.hhmusic.ui.fragment.AlbumDetailFragment
 import com.hhmusic.ui.fragment.ArtistDetailFragment
@@ -157,24 +158,23 @@ class SongListAdapter(private val myActivity: MainActivity):
         }
     }
 
-     private fun createOnClickListener(song: Song, position: Int): View.OnClickListener {
+    private fun createOnClickListener(song: Song, position: Int): View.OnClickListener {
         return View.OnClickListener {
             var playerManager = (myActivity.application as HHMusicApplication).getPlayerManager()
             playerManager?.removeMediaSource()
             playerManager?.setSongList(ArrayList(songList), position)
 
-            //val bundle =  MainActivity.getIntent(it.context, ArrayList(songList), song.songId, position)
-            val bundle =  MainActivity.getIntent(it.context, song)
-            myActivity.openPlayerScreen(bundle)
+            val intent =  MainActivity.getIntent(it.context, PlayerActivity.ACTION_PLAY_FROM_SONG_LIST, song)
+            myActivity.openPlayerScreen(intent)
 
             // setup mini music
             myActivity.setupMiniMusic(song)
 
             Toast.makeText(HHMusicApplication.applicationContext(), "Play song", Toast.LENGTH_SHORT).show()
         }
-     }
+    }
 
-     class SongListViewHolder(private val binding: SongListItemBinding): RecyclerView.ViewHolder(binding.root) {
+    class SongListViewHolder(private val binding: SongListItemBinding): RecyclerView.ViewHolder(binding.root) {
 
          fun bind(itemOnClickListener: View.OnClickListener,
                   popupMenuBtnOnClickListener: View.OnClickListener,
@@ -193,7 +193,6 @@ class SongListAdapter(private val myActivity: MainActivity):
              }
          }
      }
-
 
     private class SongDiffCallback : DiffUtil.ItemCallback<Song>() {
 

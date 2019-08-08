@@ -39,18 +39,8 @@ class NowPlayingFragment(private val myActivity: FragmentActivity): Fragment(), 
         val TAG = "Playing song fragment"
     }
 
-
     //lateinit var binding: ContentPlayerBinding
     lateinit var binding: FragmentNowPlayerBinding
-
-    private var startAutoPlay: Boolean = true
-    private var startWindow: Int = C.INDEX_UNSET
-    private var startPosition: Long = C.TIME_UNSET
-
-    // Saved instance state keys.
-    private val KEY_WINDOW = "window"
-    private val KEY_POSITION = "position"
-    private val KEY_AUTO_PLAY = "auto_play"
 
     private var playerManager: PlayerManager? = null
 
@@ -79,17 +69,18 @@ class NowPlayingFragment(private val myActivity: FragmentActivity): Fragment(), 
         toolbar.setTitle("Player");
 
         playerManager = (activity?.application as HHMusicApplication).getPlayerManager()
-        if (playerManager?.isPlaying!!) {
-            releasePlayer()
-            playerManager?.isPlaying = false
-            playerManager?.initializePlayer()
+        if (mSong?.songId != playerManager?.getCurrentPlayedSong()?.value?.songId) {   // play another song
+            //if (playerManager?.isPlaying!!) {
+                releasePlayer()
+                playerManager?.isPlaying = false
+                playerManager?.initializePlayer()
+            //}
         }
 
         mSong?.let {
             // bind song object onto UI
             binding.contentPlayer.songItem = mSong
         }
-
 
         //binding.contentPlayer.addToPlaylist.setOnClickListener(this)
         binding.contentPlayer.addPlayListOnClickListener = createAddPlayListListener()
@@ -98,16 +89,6 @@ class NowPlayingFragment(private val myActivity: FragmentActivity): Fragment(), 
         binding.contentPlayer.playerView.setControlDispatcher(PlayerControlDispatcher())  // detect the click event of exoplayer play/pause button
         binding.contentPlayer.playerView.setErrorMessageProvider(PlayerErrorMessageProvider())
         binding.contentPlayer.playerView.requestFocus()
-
-        if (savedInstanceState != null) {
-            startAutoPlay = savedInstanceState.getBoolean(KEY_AUTO_PLAY)
-            startWindow = savedInstanceState.getInt(KEY_WINDOW)
-            startPosition = savedInstanceState.getLong(KEY_POSITION)
-
-            playerManager?.updateStartPosition(startAutoPlay, startWindow, startPosition)
-        } else {
-            clearStartPosition()
-        }
 
         return binding.root
     }
@@ -132,16 +113,6 @@ class NowPlayingFragment(private val myActivity: FragmentActivity): Fragment(), 
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        updateStartPosition()
-
-        outState.putBoolean(KEY_AUTO_PLAY, startAutoPlay)
-        outState.putInt(KEY_WINDOW, startWindow)
-        outState.putLong(KEY_POSITION, startPosition)
-    }
-
     private fun createAddPlayListListener() : View.OnClickListener {
         return View.OnClickListener {
             var fragment = AddPlayListFragment(activity as PlayerActivity, mSong!!)
@@ -150,7 +121,7 @@ class NowPlayingFragment(private val myActivity: FragmentActivity): Fragment(), 
     }
     private fun createNowPlayingListListener() : View.OnClickListener {
         return View.OnClickListener {
-            var fragment = NowPlayinglistFragment(activity as PlayerActivity, playerManager?.getSongList() )
+            var fragment = NowPlayingListFragment(activity as PlayerActivity, playerManager?.getSongList() )
             fragment.show(activity?.supportFragmentManager, "Now Playing list ")
         }
     }
@@ -239,10 +210,16 @@ class NowPlayingFragment(private val myActivity: FragmentActivity): Fragment(), 
                         }
                     }
 
+                    // update binding object bound to UI
                     mSong = it
                     binding.contentPlayer.songItem = mSong
+
                     // update LiveDate in PlayerManger so that MiniMusic bottom toolbar can observe
                     playerManager?.setCurrentPlayedSong(it)
+
+                    // update current playing index, so when we go back by tapping on miniMusic bottom toolbar,
+                    //  playerManager know where to seek back to
+                    playerManager?.setCurrentSongIndex(playerManager?.getPlayer()?.currentWindowIndex!!)
                 }
             }
         }
@@ -286,7 +263,4 @@ class NowPlayingFragment(private val myActivity: FragmentActivity): Fragment(), 
         if (context != null)
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
-
-
-
 }
