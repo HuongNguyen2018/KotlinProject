@@ -1,1 +1,4 @@
 
+Implement MVVM and Dagger2, Retrofit, Glided to load image
+Connect to githib API to get User list and Repository of user
+It will be 2 screens (User list and Repository List)
